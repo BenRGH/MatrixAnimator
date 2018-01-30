@@ -67,9 +67,6 @@
 
         'Output to single pattern textbox
         OutputTxt.Text = (matrixStr)
-        'Increment frame count
-        frameCount += 1
-        FrameCnt.Text = frameCount.ToString()
         'Copy to clipboard
         Clipboard.SetText(matrixStr)
 
@@ -183,11 +180,109 @@
         Next
     End Sub
 
-    Private Sub AddTextBtn_Click(sender As Object, e As EventArgs) Handles AddTextBtn.Click
+    Private Sub AddTextBtn_Click(sender As Object, eventArgs As EventArgs) Handles AddTextBtn.Click
         'Long sub that provides basic alphabet and numbers
-        If IsAlphaNum(TextEntry.Text) Then
+        'Alphanumerical chars below
+        Dim alphanum(35, 1) As String
+        'a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z,
+        'n1, n2, n3, n4, n5, n6, n7, n8, n9, n0
 
+        alphanum(0, 1) = "a"
+        alphanum(1, 1) = "b"
+        alphanum(2, 1) = "c"
+        alphanum(3, 1) = "d"
+        alphanum(4, 1) = "e"
+        alphanum(5, 1) = "f"
+        alphanum(6, 1) = "g"
+        alphanum(7, 1) = "h"
+        alphanum(8, 1) = "i"
+        alphanum(9, 1) = "j"
+        alphanum(10, 1) = "k"
+        alphanum(11, 1) = "l"
+        alphanum(12, 1) = "m"
+        alphanum(13, 1) = "n"
+        alphanum(14, 1) = "o"
+        alphanum(15, 1) = "p"
+        alphanum(16, 1) = "q"
+        alphanum(17, 1) = "r"
+        alphanum(18, 1) = "s"
+        alphanum(19, 1) = "t"
+        alphanum(20, 1) = "u"
+        alphanum(21, 1) = "v"
+        alphanum(22, 1) = "w"
+        alphanum(23, 1) = "x"
+        alphanum(24, 1) = "y"
+        alphanum(25, 1) = "z"
+        alphanum(26, 1) = "1"
+        alphanum(27, 1) = "2"
+        alphanum(28, 1) = "3"
+        alphanum(29, 1) = "4"
+        alphanum(30, 1) = "5"
+        alphanum(31, 1) = "6"
+        alphanum(32, 1) = "7"
+        alphanum(33, 1) = "8"
+        alphanum(34, 1) = "9"
+        alphanum(35, 1) = "0"
+
+
+        alphanum(0, 0) = "{B11111111,B11111111,B11000011,B11000011,B11111111,B11111111,B11000011,B11000011},\" & vbCrLf
+        alphanum(1, 0) = "{B11111110,B11000011,B11000011,B11111110,B11111111,B11000011,B11000011,B11111110},\" & vbCrLf
+        alphanum(2, 0) = "{B11111111,B11111111,B11000000,B11000000,B11000000,B11000000,B11111111,B11111111},\" & vbCrLf
+        alphanum(3, 0) = "{B11111110,B11000111,B11000011,B11000011,B11000011,B11000011,B11000111,B11111110},\" & vbCrLf
+        alphanum(4, 0) = "{B11111111,B11111111,B11000000,B11111111,B11111111,B11000000,B11111111,B11111111},\" & vbCrLf
+        alphanum(5, 0) = "{B11111111,B11111111,B11000000,B11111111,B11111111,B11000000,B11000000,B11000000},\" & vbCrLf
+        alphanum(6, 0) = "{B11111111,B11111111,B11000000,B11001111,B11001111,B11000011,B11111111,B11111111},\" & vbCrLf
+        alphanum(7, 0) = "{B11000011,B11000011,B11000011,B11111111,B11111111,B11000011,B11000011,B11000011},\" & vbCrLf
+        alphanum(8, 0) = "{B11111111,B11111111,B00011000,B00011000,B00011000,B00011000,B11111111,B11111111},\" & vbCrLf
+        alphanum(9, 0) = "{B11111111,B11111111,B00011000,B00011000,B00011000,B00011000,B11111000,B11111000},\" & vbCrLf
+        alphanum(10, 0) = "{B11001111,B11011110,B11111100,B11111000,B11111000,B11111100,B11011110,B11001111},\" & vbCrLf
+        alphanum(11, 0) = "{B11000000,B11000000,B11000000,B11000000,B11000000,B11000000,B11111111,B11111111},\" & vbCrLf
+        alphanum(12, 0) = "{B11111111,B11111111,B11111111,B11011011,B11011011,B11011011,B11011011,B11011011},\" & vbCrLf
+        alphanum(13, 0) = "{B11000011,B11100011,B11110011,B11111011,B11011111,B11001111,B11000111,B11000011},\" & vbCrLf
+        alphanum(14, 0) = "{B11111111,B11111111,B11000011,B11000011,B11000011,B11000011,B11111111,B11111111},\" & vbCrLf
+        alphanum(15, 0) = "{B11111110,B11111111,B11000011,B11000011,B11111111,B11111110,B11000000,B11000000},\" & vbCrLf
+        alphanum(16, 0) = "{B11111111,B11111111,B11000011,B11000011,B11001011,B11000111,B11111111,B11111111},\" & vbCrLf
+        alphanum(17, 0) = "{B11111110,B11111111,B11000011,B11000011,B11111110,B11111110,B11000111,B11000011},\" & vbCrLf
+        alphanum(18, 0) = "{B11111111,B11111111,B11000000,B11111111,B11111111,B00000011,B11111111,B11111111},\" & vbCrLf
+        alphanum(19, 0) = "{B11111111,B11111111,B00011000,B00011000,B00011000,B00011000,B00011000,B00011000},\" & vbCrLf
+        alphanum(20, 0) = "{B11000011,B11000011,B11000011,B11000011,B11000011,B11000011,B11111111,B11111111},\" & vbCrLf
+        alphanum(21, 0) = "{B10000001,B11000011,B11000011,B11100111,B01100110,B01111110,B00111100,B00011000},\" & vbCrLf
+        alphanum(22, 0) = "{B11000011,B11000011,B11011011,B11011011,B11011011,B11011011,B11111111,B11111111},\" & vbCrLf
+        alphanum(23, 0) = "{B10000001,B01000010,B00100100,B00011000,B00011000,B00100100,B01000010,B10000001},\" & vbCrLf
+        alphanum(24, 0) = "{B10000001,B11000011,B01111110,B00111100,B00011000,B00011000,B00011000,B00011000},\" & vbCrLf
+        alphanum(25, 0) = "{B11111111,B11111111,B00001110,B00011100,B00111000,B01110000,B11111111,B11111111},\" & vbCrLf
+        alphanum(26, 0) = "{B00011000,B00011000,B00011000,B00011000,B00011000,B00011000,B00011000,B00011000},\" & vbCrLf
+        alphanum(27, 0) = "{B11111110,B11111111,B00000011,B00000011,B00111110,B01110000,B11111111,B11111111},\" & vbCrLf
+        alphanum(28, 0) = "{B11111111,B11111111,B00000011,B01111111,B01111111,B00000011,B11111111,B11111111},\" & vbCrLf
+        alphanum(29, 0) = "{B11000011,B11000011,B11000011,B11111111,B11111111,B00000011,B00000011,B00000011},\" & vbCrLf
+        alphanum(30, 0) = "{B11111111,B11111111,B11000000,B11111110,B11111110,B00000011,B11111111,B11111110},\" & vbCrLf
+        alphanum(31, 0) = "{B11111111,B11111111,B11000000,B11111111,B11111111,B11000011,B11111111,B11111111},\" & vbCrLf
+        alphanum(32, 0) = "{B11111111,B11111111,B00000011,B00011111,B00000110,B00001100,B00011000,B00011000},\" & vbCrLf
+        alphanum(33, 0) = "{B11111111,B11000011,B11000011,B11111111,B11111111,B11000011,B11000011,B11111111},\" & vbCrLf
+        alphanum(34, 0) = "{B11111111,B11111111,B11000011,B11000011,B11111111,B01111111,B00000011,B00000011},\" & vbCrLf
+        alphanum(35, 0) = "{B11111111,B11000011,B11000011,B11000011,B11000011,B11000011,B11000011,B11111111},\" & vbCrLf
+
+        Dim rawText As String = TextEntry.Text.ToLower()
+
+
+        If IsAlphaNum(rawText) Then
+            For Each letter In rawText
+                Dim j = 0
+                While j < 36
+                    If letter = alphanum(j, 1) Then
+                        Dim i = 0
+                        While i < LetterCnt.Value
+                            anim.Append(alphanum(j, 0))
+                            i += 1
+                            frameCount += 1
+                            FrameCnt.Text = frameCount
+                        End While
+                    End If
+                    j += 1
+                End While
+            Next
         End If
+
     End Sub
 
     Private Function IsAlphaNum(ByVal strInputText As String) As Boolean
