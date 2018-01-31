@@ -1295,7 +1295,7 @@ Partial Class AnimateForm
         '
         'OutputTxt
         '
-        Me.OutputTxt.Location = New System.Drawing.Point(11, 254)
+        Me.OutputTxt.Location = New System.Drawing.Point(12, 229)
         Me.OutputTxt.Name = "OutputTxt"
         Me.OutputTxt.ReadOnly = True
         Me.OutputTxt.Size = New System.Drawing.Size(622, 20)
@@ -1325,7 +1325,7 @@ Partial Class AnimateForm
         '
         Me.OutputFrame.BackColor = System.Drawing.SystemColors.Window
         Me.OutputFrame.ForeColor = System.Drawing.SystemColors.WindowFrame
-        Me.OutputFrame.Location = New System.Drawing.Point(12, 280)
+        Me.OutputFrame.Location = New System.Drawing.Point(12, 255)
         Me.OutputFrame.Name = "OutputFrame"
         Me.OutputFrame.Size = New System.Drawing.Size(621, 113)
         Me.OutputFrame.TabIndex = 71
@@ -1423,7 +1423,7 @@ Partial Class AnimateForm
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoSize = True
-        Me.ClientSize = New System.Drawing.Size(646, 405)
+        Me.ClientSize = New System.Drawing.Size(646, 379)
         Me.Controls.Add(Me.AddTextBtn)
         Me.Controls.Add(Me.LetterCnt)
         Me.Controls.Add(Me.Label2)
