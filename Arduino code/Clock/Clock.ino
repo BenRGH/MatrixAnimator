@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include "DS3231.h"
 
-RTClib RTC;
+DS3231 Clock;
 
 //Vars
 int displays = 4; //Number of displays
@@ -13,8 +13,6 @@ int CLK = 10;
 int CS = 11;
 int AButn = 9;
 int BButn = 8;
-
-DateTime lastTime; //Required for checking changes
 
 
 LedControl lc=LedControl(DIN,CLK,CS,displays);
@@ -31,8 +29,6 @@ void setup() {
     // and clear the display
     lc.clearDisplay(i);
   }
-
-  //lastTime = RTC.now();
 
   pinMode(AButn, INPUT_PULLUP);  
   pinMode(BButn, INPUT_PULLUP);
@@ -65,11 +61,12 @@ void printNum(int disp, int num){
 void printLetter(int disp, int let){
   //Prints the specified letter to the specified display
 
-  //16 letter alphabet (only chars needed):
-  //ADEFHJLMNOPRSTUY
-  int frames = 16;
+  //18 letter alphabet (only chars needed):
+  //ACDEFHJLMNOPRSTUWY
+  int frames = 18;
   byte letter[frames][8]=\
   {{B11111111,B11111111,B11000011,B11000011,B11111111,B11111111,B11000011,B11000011},\
+  {B11111111,B11111111,B11000000,B11000000,B11000000,B11000000,B11111111,B11111111},\
   {B11111110,B11000111,B11000011,B11000011,B11000011,B11000011,B11000111,B11111110},\
   {B11111111,B11111111,B11000000,B11111111,B11111111,B11000000,B11111111,B11111111},\
   {B11111111,B11111111,B11000000,B11111111,B11111111,B11000000,B11000000,B11000000},\
@@ -84,6 +81,7 @@ void printLetter(int disp, int let){
   {B11111111,B11111111,B11000000,B11111111,B11111111,B00000011,B11111111,B11111111},\
   {B11111111,B11111111,B00011000,B00011000,B00011000,B00011000,B00011000,B00011000},\
   {B11000011,B11000011,B11000011,B11000011,B11000011,B11000011,B11111111,B11111111},\
+  {B11000011,B11000011,B11011011,B11011011,B11011011,B11011011,B11111111,B11111111},\
   {B10000001,B11000011,B01111110,B00111100,B00011000,B00011000,B00011000,B00011000}};
 
   for(int row=0;row<8;row++){lc.setRow(disp,row,letter[let][row]);}
@@ -132,7 +130,7 @@ void fizzle(int digitFromRight){
   }
 }
 
-void animateTime(DateTime now){
+void showTime(){
   /* This is a mess
    * 
    * The display is ordered as follows:
@@ -148,34 +146,12 @@ void animateTime(DateTime now){
   */
 
   //Sets current time in their separate digits
-  int m2 = now.minute() % 10; //Only remainder
-  int m1 = now.minute() / 10; //No remainder
-  int h2 = now.hour() % 10;
-  int h1 = now.hour() / 10;
-
-  //Last time in digits
-  int last_m2 = lastTime.minute() % 10;
-  int last_m1 = lastTime.minute() / 10; 
-  int last_h2 = lastTime.hour() % 10;
-  int last_h1 = lastTime.hour() / 10;
-
-  //if in doubt use an if
-  //This plays the appropriate fizzle animation depending on degree of change
-  if(h1 != last_h1){
-    //Fizzle all the way left
-    fizzle(3);
-  }else if(h2 != last_h2){
-    //Fizzle 3 digits left
-    fizzle(2);
-  }else if(m1 != last_m1){
-    //Fizzle 2 digits left
-    fizzle(1);
-  }else if(m2 != last_m2){
-    //Fizzle just rightmost digit
-    fizzle(0);
-  }
-
-  lastTime = now; //So the above works
+  int m2 = Clock.getMinute() % 10; //Only remainder
+  int m1 = Clock.getMinute() / 10; //No remainder
+  bool h12; //These bools are needed by getHour for some reason
+  bool PM;
+  int h2 = Clock.getHour(h12, PM) % 10;
+  int h1 = Clock.getHour(h12, PM) / 10;
   
   //Example time 12:56
   
@@ -186,35 +162,178 @@ void animateTime(DateTime now){
  
 }
 
-void animateDate_Week(DateTime now){
+void showDate_Week(){
   //Similar to animate time but only shows the day of the week as follows
   // [T][U][0][9] = Tuesday the 9th
 
-  //String weekDay = now.weekday();
-  //Serial.println(weekDay);
+  int dow = Clock.getDoW(); //Turns the byte into easier int
   
+  switch(dow){
+    case 1:
+      //Monday
+      printLetter(3,8); //Prints 'M' on disp 3 (farthest left)
+      printLetter(2,10); //'O' on disp 2 (second farthest left)
+      break;
+      
+    case 2:
+      //Tuesday
+      printLetter(3,14); //T
+      printLetter(2,15); //U
+      break;
+            
+    case 3:
+      //Wednesday
+      printLetter(3,16); //W
+      printLetter(2,3); //E
+      break;
+      
+    case 4:
+      //Thursday
+      printLetter(3,14); //T
+      printLetter(2,5); //H
+      break;
+      
+    case 5:
+      //Friday
+      printLetter(3,4); //F
+      printLetter(2,12); //R
+      break;
+      
+    case 6:
+      //Saturday
+      printLetter(3,13); //S
+      printLetter(2,0); //A
+      break;
+      
+    case 7:
+      //Sunday
+      printLetter(3,13); //S
+      printLetter(2,15); //U
+      break;
+
+    default:
+      printLetter(3,17);
+      printLetter(2,17);
+  }
+
+  int date = Clock.getDate();
+  
+  printNum(1,date/10); //First digit of the date
+  printNum(0,date%10); //Second digit
+
+
+  Serial.print(Clock.getDoW());
 }
 
-void animateDate_Year(DateTime now){
+void showDate_Year(){
+  // Shows month and year
+  // [M][A][1][8] = May 2018
+
+  bool cent; //Required for get month
+  int month = Clock.getMonth(cent);
+
+  switch(month){
+    case 1:
+      //Jan
+      printLetter(3,6); //J
+      printLetter(2,0); //A
+      break;
+      
+    case 2:
+      //Feb
+      printLetter(3,4); //F
+      printLetter(2,3); //E
+      break;
+      
+    case 3:
+      //Mar
+      printLetter(3,8); //M
+      printLetter(2,12); //R
+      break;
+      
+    case 4:
+      //Apr
+      printLetter(3,0); //A
+      printLetter(2,11); //P
+      break;
+      
+    case 5:
+      //May
+      printLetter(3,8); //M
+      printLetter(2,17); //Y
+      break;
+      
+    case 6:
+      //Jun
+      printLetter(3,6); //J
+      printLetter(2,9); //N
+      break;
+      
+    case 7:
+      //Jul
+      printLetter(3,6); //J
+      printLetter(2,7); //L
+      break;
+      
+    case 8:
+      //Aug
+      printLetter(3,0); //A
+      printLetter(2,15); //U
+      break;
+      
+    case 9:
+      //Sep
+      printLetter(3,13); //S
+      printLetter(2,3); //E
+      break;
+      
+    case 10:
+      //Oct
+      printLetter(3,9); //O
+      printLetter(2,1); //C
+      break;
+      
+    case 11:
+      //Nov
+      printLetter(3,9); //N
+      printLetter(2,10); //O
+      break;
+      
+    case 12:
+      //Dec
+      printLetter(3,2); //D
+      printLetter(2,3); //E
+      break;
+
+    default:
+      printLetter(3,17);
+      printLetter(2,17);
+    
+  }
+
+  int year = Clock.getYear();
+
+  printNum(1,year/10);
+  printNum(0,year%10);
   
 }
 
 void loop() { 
-  //Get current time, this unfortunately is a cheap rtc so it lags every time it checks
-  DateTime now = RTC.now();
-  
-  //Pass it to the display animator
-  animateTime(now);
+  //This applies the current time to the displays
+  showTime();
 
   delay(10000); //10s
+  fizzle(3);
 
-  animateDate_Week(now);
-
-  delay(10000); //10s
-
-  animateDate_Year(now);
+  showDate_Week();
 
   delay(10000); //10s
+  fizzle(3);
+
+  showDate_Year();
+
+  delay(10000); //10s
+  fizzle(3);
 
   //the delays make the whole loop take 30s
   //e.g. it only checks every thirty seconds for the time
