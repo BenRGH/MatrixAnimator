@@ -5,7 +5,6 @@
 RTClib RTC;
 
 //Vars
-unsigned long delayFrame=100; //Frame rate defined here in ms
 int displays = 4; //Number of displays
 int intensity = 5; //Brightness of displays
 //Pins
@@ -61,6 +60,33 @@ void printNum(int disp, int num){
 
   for(int row=0;row<8;row++){lc.setRow(disp,row,number[num][row]);}
   
+}
+
+void printLetter(int disp, int let){
+  //Prints the specified letter to the specified display
+
+  //16 letter alphabet (only chars needed):
+  //ADEFHJLMNOPRSTUY
+  int frames = 16;
+  byte letter[frames][8]=\
+  {{B11111111,B11111111,B11000011,B11000011,B11111111,B11111111,B11000011,B11000011},\
+  {B11111110,B11000111,B11000011,B11000011,B11000011,B11000011,B11000111,B11111110},\
+  {B11111111,B11111111,B11000000,B11111111,B11111111,B11000000,B11111111,B11111111},\
+  {B11111111,B11111111,B11000000,B11111111,B11111111,B11000000,B11000000,B11000000},\
+  {B11000011,B11000011,B11000011,B11111111,B11111111,B11000011,B11000011,B11000011},\
+  {B11111111,B11111111,B00011000,B00011000,B00011000,B00011000,B11111000,B11111000},\
+  {B11000000,B11000000,B11000000,B11000000,B11000000,B11000000,B11111111,B11111111},\
+  {B11111111,B11111111,B11111111,B11011011,B11011011,B11011011,B11011011,B11011011},\
+  {B11000011,B11100011,B11110011,B11111011,B11011111,B11001111,B11000111,B11000011},\
+  {B11111111,B11111111,B11000011,B11000011,B11000011,B11000011,B11111111,B11111111},\
+  {B11111110,B11111111,B11000011,B11000011,B11111111,B11111110,B11000000,B11000000},\
+  {B11111110,B11111111,B11000011,B11000011,B11111110,B11111110,B11000111,B11000011},\
+  {B11111111,B11111111,B11000000,B11111111,B11111111,B00000011,B11111111,B11111111},\
+  {B11111111,B11111111,B00011000,B00011000,B00011000,B00011000,B00011000,B00011000},\
+  {B11000011,B11000011,B11000011,B11000011,B11000011,B11000011,B11111111,B11111111},\
+  {B10000001,B11000011,B01111110,B00111100,B00011000,B00011000,B00011000,B00011000}};
+
+  for(int row=0;row<8;row++){lc.setRow(disp,row,letter[let][row]);}
 }
 
 void fizzle(int digitFromRight){
@@ -160,26 +186,39 @@ void animateTime(DateTime now){
  
 }
 
+void animateDate_Week(DateTime now){
+  //Similar to animate time but only shows the day of the week as follows
+  // [T][U][0][9] = Tuesday the 9th
+
+  //String weekDay = now.weekday();
+  //Serial.println(weekDay);
+  
+}
+
+void animateDate_Year(DateTime now){
+  
+}
+
 void loop() { 
   //Get current time, this unfortunately is a cheap rtc so it lags every time it checks
   DateTime now = RTC.now();
   
   //Pass it to the display animator
-  animate(now);
+  animateTime(now);
 
-  //Makes the whole loop take 30s and checks buttons 
+  delay(10000); //10s
+
+  animateDate_Week(now);
+
+  delay(10000); //10s
+
+  animateDate_Year(now);
+
+  delay(10000); //10s
+
+  //the delays make the whole loop take 30s
   //e.g. it only checks every thirty seconds for the time
-  for(int i=0;i<120;i++){
-    //This is used to count 30 sec between time checks
-    if (digitalRead(AButn) == LOW){
-        Serial.print("a");
-    }
-    if (digitalRead(BButn) == LOW){
-        Serial.print("b");
-    }
-    delay(250);
-  }
-  
+
 
   
 }
