@@ -2,23 +2,22 @@
 #include <Wire.h>
 #include "DS3231.h"
 
+//This is required, does time stuff
 RTClib RTC;
 
 //Vars
 unsigned long delayFrame=100; //Frame rate defined here in ms
 int displays = 4; //Number of displays
-int intensity = 5; //Brightness of displays
+int intensity = 7; //Brightness of displays
 //Pins
 int DIN = 12;
 int CLK = 10;
 int CS = 11;
-int AButn = 9;
-int BButn = 8;
-
-DateTime lastTime; //Required for checking changes
-
-
-LedControl lc=LedControl(DIN,CLK,CS,displays);
+//Time stuff
+int currentTime; //currentTime is time in seconds, max is 86,399
+int lastTime; //Required for checking changes
+//Disp
+LedControl lc = LedControl(DIN,CLK,CS,displays);
 
 
 void setup() {
@@ -33,13 +32,11 @@ void setup() {
     lc.clearDisplay(i);
   }
 
-  //lastTime = RTC.now();
-
-  pinMode(AButn, INPUT_PULLUP);  
-  pinMode(BButn, INPUT_PULLUP);
-
-
-  Serial.begin(9600); //REMOVE THIS AFTER DEBUG!
+  //Get current time
+  DateTime RTCTime = RTC.now(); //Get the time provided by the RTC component
+  //And then put it all into a messy big number which is the time in seconds from midnight
+  currentTime = (RTCTime.hour()*3600) + (RTCTime.minute()*60) + RTCTime.second();
+  
 }
 
 void printNum(int disp, int num){
@@ -89,10 +86,10 @@ void fizzle(int digitFromRight){
 
   
   for(int frame=0;frame<frames;frame++){
-    //Do each frame at the same time on each display
+    //Each frame all displays are updated the same
     
     for(int disp=digitFromRight;disp>=0;){
-      //Work from the furthest left disp
+      //Work from the furthest disp left
       
       for(int row=0;row<8;row++){
         //Draw
@@ -101,12 +98,11 @@ void fizzle(int digitFromRight){
       
       disp--; //Go right
     }
-    
-    delay(15); //15*18 = 270ms for this section
+    delay(15);//Changes the frame rate, 18 frames at 15ms delay is 270ms total
   }
 }
 
-void animateTime(DateTime now){
+void animate(){
   /* This is a mess
    * 
    * The display is ordered as follows:
@@ -121,17 +117,23 @@ void animateTime(DateTime now){
    * 
   */
 
-  //Sets current time in their separate digits
-  int m2 = now.minute() % 10; //Only remainder
-  int m1 = now.minute() / 10; //No remainder
-  int h2 = now.hour() % 10;
-  int h1 = now.hour() / 10;
+  int currentTime_h = currentTime / 3600; //Gets hours from the number of seconds since midnight
+  int currentTime_m = (currentTime - (currentTime_h * 3600)) / 60; //Gets minutes
+  int lastTime_h = lastTime / 3600;
+  int lastTime_m = (lastTime - (lastTime_h * 3600)) / 60;
+  
+
+  //Current time in digits
+  int m2 = currentTime_m % 10; //Only remainder
+  int m1 = currentTime_m / 10; //No remainder
+  int h2 = currentTime_h % 10;
+  int h1 = currentTime_h / 10;
 
   //Last time in digits
-  int last_m2 = lastTime.minute() % 10;
-  int last_m1 = lastTime.minute() / 10; 
-  int last_h2 = lastTime.hour() % 10;
-  int last_h1 = lastTime.hour() / 10;
+  int last_m2 = lastTime_m % 10;
+  int last_m1 = lastTime_m / 10; 
+  int last_h2 = lastTime_h % 10;
+  int last_h1 = lastTime_h / 10;
 
   //if in doubt use an if
   //This plays the appropriate fizzle animation depending on degree of change
@@ -147,39 +149,48 @@ void animateTime(DateTime now){
   }else if(m2 != last_m2){
     //Fizzle just rightmost digit
     fizzle(0);
+  }else{
+    delay(270);
   }
-
-  lastTime = now; //So the above works
   
   //Example time 12:56
   
   printNum(0,m2); // 6
   printNum(1,m1); // 5
+                  // :
   printNum(2,h2); // 2
   printNum(3,h1); // 1
- 
+
+  //Fancy fading every second on the minute displays
+  /* removed for accuracy testing
+  for(int i = 8; i>3; i--){
+    //Darken
+    lc.setIntensity(0,i);
+    lc.setIntensity(1,i);
+    delay(100);
+  }
+  for(int i = 3; i<8; i++){
+    //Lighten
+    lc.setIntensity(0,i);
+    lc.setIntensity(1,i);
+    delay(100);
+  }
+  */
+
+  //Total time so far is only 270ms so to make it 1s we add 730ms delay
+  delay(730);
+
+  lastTime = currentTime;
+  
+  if(currentTime < 86399){
+    currentTime += 1;
+  }else{
+    currentTime = 0;
+  }
+  
 }
 
 void loop() { 
-  //Get current time, this unfortunately is a cheap rtc so it lags every time it checks
-  DateTime now = RTC.now();
-  
-  //Pass it to the display animator
-  animate(now);
+  animate();
 
-  //Makes the whole loop take 30s and checks buttons 
-  //e.g. it only checks every thirty seconds for the time
-  for(int i=0;i<120;i++){
-    //This is used to count 30 sec between time checks
-    if (digitalRead(AButn) == LOW){
-        Serial.print("a");
-    }
-    if (digitalRead(BButn) == LOW){
-        Serial.print("b");
-    }
-    delay(250);
-  }
-  
-
-  
 }
