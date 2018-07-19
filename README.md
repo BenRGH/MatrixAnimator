@@ -6,6 +6,7 @@ A Visual Basic program used to generate animation code for the 8x8 Arduino MAX72
 The VB program generates either a single line of bytes for use with your own programs/testing  or the full animation 2 dimensional array to be used with the arduino code examples provided. See the appropriate paste section in the Custom8x8 arduino .ino file or just replace the transition animations in the clock code.
 
 [Video Example](https://i.imgur.com/7xM1VQv.mp4)
+![Image Example](https://i.imgur.com/IXJEs5K.jpg)
 
 NOTE: The LedControl.zip inside the Arduino Code Examples directory is the library required for running my examples, make sure you import it. 
 
