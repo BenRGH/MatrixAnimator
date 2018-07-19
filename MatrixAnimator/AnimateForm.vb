@@ -82,7 +82,7 @@
 
     Private Sub AddFrameBtn_Click(sender As Object, e As EventArgs) Handles AddFrameBtn.Click
 
-        '                                           j                   i
+        '                                           j v                  <i
         '                                A  B  C  D  E  F  G  H
         Dim matrix = New Integer(7, 7) {{0, 0, 0, 0, 0, 0, 0, 0},
                                         {0, 0, 0, 0, 0, 0, 0, 0},

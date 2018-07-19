@@ -12,6 +12,16 @@ int CS = 11;
 LedControl lc=LedControl(DIN,CLK,CS,displays);
 
 
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ *  
+ *  THIS IS THE LESS DEVELOPED ARDUINO CODE, FOR MORE DETAILS/COMMENTS/EXPLANATIONS
+ *  SEE CLOCK.INO
+ *  
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+
+
+
 void setup() {
   /*
    * The MAX72XX is in power-saving mode on startup, we have to do a wakeup call
