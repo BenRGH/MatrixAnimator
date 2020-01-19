@@ -11,7 +11,7 @@ The VB program generates either a single line of bytes for use with your own pro
 NOTE: The LedControl.zip inside the Arduino Code Examples directory is the library required for running my examples, make sure you import it. 
 
 # For the VB program download
- See [Release.7z](https://github.com/BenRGH/MatrixAnimator/raw/master/Release.7z) or go to MatrixAnimator/bin/Release and run MatrixAnimator.exe, if you would rather compile for yourself from source code, simply open MatrixAnimator.slOf
+ See [Release.7z](https://github.com/BenRGH/MatrixAnimator/raw/master/Release.7z) or go to MatrixAnimator/bin/Release and run MatrixAnimator.exe, if you would rather compile for yourself from source code, simply open MatrixAnimator.sln
 
 # For the Arduino code
  See appropriate directory, the Clock requires 4 displays and an RTC module, the Custom8x8 requires 1 display.
